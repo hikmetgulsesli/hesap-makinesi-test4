@@ -1,0 +1,95 @@
+# PRD — Hesap Makinesi (hesap-makinesi-test4)
+
+## 1. Proje Genel Bakışı
+
+**Proje Adı:** hesap-makinesi-test4  
+**Platform:** Web (SPA)  
+**Özet:** Dört temel aritmetik işlemi (toplama, çıkarma, çarpma, bölme) yapabilen, geçmiş hesaplama kayıtlarını gösteren basit hesap makinesi uygulaması.  
+**Hedef Kullanıcı:** Günlük hesaplama ihtiyaçları olan son kullanıcılar.  
+
+---
+
+## 2. Hedef Platform
+
+- **Platform:** Web tarayıcısı (masaüstü ve mobil uyumlu)
+- **Teknik:** React 18 + Vite + Tailwind CSS
+- **Responsive:** Evet — mobil ve masaüstü görünümler desteklenecek
+
+---
+
+## 3. Fonksiyonel Gereksinimler
+
+### 3.1 Ana Hesap Makinesi Görünümü
+- **Display (Ekran):** Büyük yazı tipiyle mevcut girilen sayıyı ve sonucu gösterir
+- **Temizle (C):** Tüm girişi sıfırlar
+- **Geri Sil (⌫):** Son eklenen rakamı siler
+- **İşlem Butonları:** +, -, ×, ÷
+- **Rakam Butonları:** 0–9
+- **Ondalık Nokta:** . (virgül olarak Türkçe gösterim)
+- **Eşittir (=):** Hesaplamayı çalıştırır, sonucu display'de gösterir
+- **İşlem önceliği:** Standart matematik önceliği (çarpma/bölme önce)
+
+### 3.2 Geçmiş Paneli (Sidebar)
+- Son **5 hesaplama** kaydını listeler
+- Her kayıt şunu içerir: `sayı1 İŞLEM sayı2 = sonuç` formatında
+- En son işlem en üstte
+- Boş durumda: "Henüz işlem yapılmadı" mesajı
+
+### 3.3 Hata Durumları
+- **Sıfıra bölme:** "Tanımsız" mesajı gösterilir, hata ikonu
+- **Taşma (overflow):** Sayı display'e sığmadığında bilimsel gösterim veya "Taşma" mesajı
+- **Geçersiz işlem:** Ardışık iki işlem operatörü girilmesi engellenir
+
+### 3.4 Klavye Desteği
+- 0–9 rakamlar
+- + - * / operatörler
+- Enter → eşittir
+- Escape → temizle
+- Backspace → geri sil
+- . → ondalık nokta
+
+---
+
+## 4. Teknik Gereksinimler
+
+### 4.1 Teknoloji Stack
+- **Framework:** React 18 (Function Components + Hooks)
+- **Build:** Vite
+- **Styling:** Tailwind CSS
+- **Durum Yönetimi:** React useState + useReducer (basit proje, Context gereksiz)
+- **Kalıcı Depolama:** localStorage (geçmiş kayıtları tarayıcıda saklar)
+
+---
+
+## 5. UI/UX Gereksinimler
+
+### 5.1 Genel Düzen
+- **Masaüstü:** Sol tarafta ana hesap makinesi (60%), sağ tarafta geçmiş paneli (40%)
+- **Mobil:** Üstte display + tuş takımı, altta geçmiş paneli (collapsible/drawer)
+
+### 5.2 Renk Paleti
+- **Primary (Butonlar):** #2563EB (mavi)
+- **Secondary (Operatörler):** #F59E0B (amber)
+- **Equals:** #10B981 (yeşil)
+- **Clear/Backspace:** #EF4444 (kırmızı)
+- **Background:** #F3F4F6 (açık gri)
+- **Display Background:** #1F2937 (koyu gri)
+- **Display Text:** #FFFFFF (beyaz)
+- **Text:** #111827 (koyu)
+
+### 5.3 Tipografi
+- **Display rakamları:** 3rem–4rem (sayıya göre ölçeklenir)
+- **Buton rakamları:** 1.5rem, bold
+- **Geçmiş liste:** 0.875rem
+- **Font ailesi:** Tailwind varsayılan (system-ui)
+
+---
+
+## 9. Ekranlar (Screens)
+
+| # | Ekran Adı | Tür | Açıklama |
+|---|-----------|-----|----------|
+| 1 | Ana Hesap Makinesi | main-view | Display, tuş takımı, operatörler, eşittir |
+| 2 | Geçmiş Paneli | sidebar | Son 5 işlemin listesi |
+| 3 | Boş Durum (Geçmiş) | empty-state | Henüz işlem yapılmadığında gösterilir |
+| 4 | Hata Durumu | error-state | Sıfıra bölme veya taşma durumunda gösterilir |
