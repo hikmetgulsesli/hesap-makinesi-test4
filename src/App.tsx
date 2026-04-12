@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 interface HistoryItem {
   id: string;
@@ -6,28 +6,77 @@ interface HistoryItem {
   result: string;
 }
 
+interface ButtonProps {
+  label: React.ReactNode;
+  onClick: () => void;
+  variant?: 'default' | 'operator' | 'equal' | 'clear';
+  className?: string;
+}
+
+const Button = ({ label, onClick, variant = 'default', className = '' }: ButtonProps) => {
+  const baseClasses = 'p-6 rounded-xl font-bold text-xl transition-all duration-100 active:scale-95';
+  
+  const variantClasses = {
+    default: 'bg-surface-variant text-on-surface hover:bg-white/10',
+    operator: 'bg-secondary-container text-on-secondary-container hover:brightness-110',
+    equal: 'bg-tertiary-container text-on-tertiary-container hover:brightness-110',
+    clear: 'text-primary hover:bg-surface-container-low'
+  };
+
+  return (
+    <button
+      onClick={onClick}
+      className={`${baseClasses} ${variantClasses[variant]} ${className}`}
+      aria-label={typeof label === 'string' ? label : undefined}
+    >
+      {label}
+    </button>
+  );
+};
+
+// Load history from localStorage
+const loadHistory = (): HistoryItem[] => {
+  if (typeof window === 'undefined') return [];
+  const saved = localStorage.getItem('calculator-history');
+  if (saved) {
+    try {
+      return JSON.parse(saved) as HistoryItem[];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+};
+
 function App() {
   const [display, setDisplay] = useState('0');
   const [previousValue, setPreviousValue] = useState<number | null>(null);
   const [operator, setOperator] = useState<string | null>(null);
   const [waitingForOperand, setWaitingForOperand] = useState(false);
   const [expression, setExpression] = useState('');
-  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [history, setHistory] = useState<HistoryItem[]>(loadHistory);
   const [showHistory, setShowHistory] = useState(true);
 
-  // Load history from localStorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem('calculator-history');
-    if (saved) {
-      try {
-        setHistory(JSON.parse(saved));
-      } catch {
-        setHistory([]);
-      }
+  // Use ref for calculate function to avoid dependency issues
+  const calculateRef = useRef<(firstValue: number, secondValue: number, op: string | null) => number>((firstValue, secondValue, op) => {
+    switch (op) {
+      case '+':
+        return firstValue + secondValue;
+      case '−':
+      case '-':
+        return firstValue - secondValue;
+      case '×':
+      case '*':
+        return firstValue * secondValue;
+      case '÷':
+      case '/':
+        return secondValue !== 0 ? firstValue / secondValue : 0;
+      default:
+        return secondValue;
     }
-  }, []);
+  });
 
-  // Save history to localStorage
+  // Save history to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('calculator-history', JSON.stringify(history));
   }, [history]);
@@ -53,22 +102,27 @@ function App() {
   }, []);
 
   const inputDigit = useCallback((digit: string) => {
-    if (waitingForOperand) {
-      setDisplay(digit);
-      setWaitingForOperand(false);
-    } else {
-      setDisplay(display === '0' ? digit : display + digit);
-    }
-  }, [display, waitingForOperand]);
+    setDisplay(prev => {
+      if (waitingForOperand) {
+        setWaitingForOperand(false);
+        return digit;
+      }
+      return prev === '0' ? digit : prev + digit;
+    });
+  }, [waitingForOperand]);
 
   const inputDecimal = useCallback(() => {
-    if (waitingForOperand) {
-      setDisplay('0.');
-      setWaitingForOperand(false);
-    } else if (display.indexOf('.') === -1) {
-      setDisplay(display + '.');
-    }
-  }, [display, waitingForOperand]);
+    setDisplay(prev => {
+      if (waitingForOperand) {
+        setWaitingForOperand(false);
+        return '0.';
+      }
+      if (prev.indexOf('.') === -1) {
+        return prev + '.';
+      }
+      return prev;
+    });
+  }, [waitingForOperand]);
 
   const performOperation = useCallback((nextOperator: string) => {
     const inputValue = parseFloat(display);
@@ -78,7 +132,7 @@ function App() {
       setExpression(`${display} ${nextOperator}`);
     } else {
       const currentValue = previousValue || 0;
-      const newValue = calculate(currentValue, inputValue, operator);
+      const newValue = calculateRef.current(currentValue, inputValue, operator);
 
       setPreviousValue(newValue);
       setDisplay(String(newValue));
@@ -89,29 +143,11 @@ function App() {
     setOperator(nextOperator);
   }, [display, operator, previousValue]);
 
-  const calculate = (firstValue: number, secondValue: number, op: string | null): number => {
-    switch (op) {
-      case '+':
-        return firstValue + secondValue;
-      case '−':
-      case '-':
-        return firstValue - secondValue;
-      case '×':
-      case '*':
-        return firstValue * secondValue;
-      case '÷':
-      case '/':
-        return secondValue !== 0 ? firstValue / secondValue : 0;
-      default:
-        return secondValue;
-    }
-  };
-
   const performCalculation = useCallback(() => {
     const inputValue = parseFloat(display);
 
     if (previousValue !== null && operator) {
-      const newValue = calculate(previousValue, inputValue, operator);
+      const newValue = calculateRef.current(previousValue, inputValue, operator);
       const expr = `${previousValue} ${operator} ${inputValue}`;
       const result = String(newValue);
       
@@ -150,37 +186,6 @@ function App() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
-
-  const Button = ({ 
-    label, 
-    onClick, 
-    variant = 'default',
-    className = ''
-  }: { 
-    label: React.ReactNode; 
-    onClick: () => void; 
-    variant?: 'default' | 'operator' | 'equal' | 'clear';
-    className?: string;
-  }) => {
-    const baseClasses = 'p-6 rounded-xl font-bold text-xl transition-all duration-100 active:scale-95';
-    
-    const variantClasses = {
-      default: 'bg-surface-variant text-on-surface hover:bg-white/10',
-      operator: 'bg-secondary-container text-on-secondary-container hover:brightness-110',
-      equal: 'bg-tertiary-container text-on-tertiary-container hover:brightness-110',
-      clear: 'text-primary hover:bg-surface-container-low'
-    };
-
-    return (
-      <button
-        onClick={onClick}
-        className={`${baseClasses} ${variantClasses[variant]} ${className}`}
-        aria-label={typeof label === 'string' ? label : undefined}
-      >
-        {label}
-      </button>
-    );
-  };
 
   return (
     <div className="h-screen flex flex-col bg-surface overflow-hidden">

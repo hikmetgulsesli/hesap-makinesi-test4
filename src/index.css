@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "./stitch/design-tokens.css";
+@import "../stitch/design-tokens.css";
 
 @theme {
   --color-tertiary-container: var(--color-tertiary-container);
