@@ -1,12 +1,4 @@
-export interface HistoryItemProps {
-  expression: string;
-  result: string;
-  date?: string;
-  onClick?: () => void;
-  error?: boolean;
-}
-
-export function HistoryItem({ expression, result, date, onClick, error = false }: HistoryItemProps) {
+export function HistoryItem({ expression, result, date, onClick, error = false }) {
   return (
     <div
       onClick={onClick}

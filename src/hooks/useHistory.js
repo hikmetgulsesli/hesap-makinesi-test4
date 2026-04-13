@@ -1,27 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 
-/**
- * @typedef {Object} HistoryItem
- * @property {string} id - Unique identifier
- * @property {string} expression - Mathematical expression
- * @property {string} result - Calculation result
- * @property {number} [timestamp] - Unix timestamp
- */
-
-/**
- * @typedef {Object} UseHistoryReturn
- * @property {HistoryItem[]} history - Array of history items
- * @property {(expression: string, result: string) => void} addToHistory - Add item to history
- * @property {() => void} clearHistory - Clear all history
- * @property {(item: HistoryItem) => string} loadHistoryItem - Get result from history item
- */
-
 const STORAGE_KEY = 'calculator-history';
 const MAX_HISTORY_ITEMS = 5;
 
 /**
  * Load history from localStorage
- * @returns {HistoryItem[]} Array of history items
+ * @returns {Array} Array of history items
  */
 function loadHistoryFromStorage() {
   if (typeof window === 'undefined') return [];
@@ -38,7 +22,7 @@ function loadHistoryFromStorage() {
 
 /**
  * Custom hook for managing calculator history
- * @returns {UseHistoryReturn} History state and operations
+ * @returns {Object} History state and operations
  */
 export function useHistory() {
   const [history, setHistory] = useState(loadHistoryFromStorage);

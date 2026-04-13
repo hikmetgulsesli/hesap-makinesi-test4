@@ -1,12 +1,7 @@
 import { useHistory } from '../hooks/useHistory';
 import { HistoryItem } from './HistoryItem';
 
-export interface HistoryPanelProps {
-  onHistoryItemClick?: (result: string) => void;
-  onClearHistory?: () => void;
-}
-
-export function HistoryPanel({ onHistoryItemClick, onClearHistory }: HistoryPanelProps) {
+export function HistoryPanel({ onHistoryItemClick, onClearHistory }) {
   const { history, clearHistory } = useHistory();
 
   const handleClear = () => {
@@ -14,11 +9,11 @@ export function HistoryPanel({ onHistoryItemClick, onClearHistory }: HistoryPane
     onClearHistory?.();
   };
 
-  const handleItemClick = (result: string) => {
+  const handleItemClick = (result) => {
     onHistoryItemClick?.(result);
   };
 
-  const formatDate = (timestamp?: number) => {
+  const formatDate = (timestamp) => {
     if (!timestamp) return '';
     const date = new Date(timestamp);
     return date.toLocaleDateString('tr-TR', { 

@@ -1,18 +1,10 @@
-export interface OperationButtonProps {
-  label: string | React.ReactNode;
-  onClick: () => void;
-  variant?: 'default' | 'operator' | 'equal' | 'clear';
-  className?: string;
-  ariaLabel?: string;
-}
-
 export function OperationButton({ 
   label, 
   onClick, 
   variant = 'default', 
   className = '',
   ariaLabel 
-}: OperationButtonProps) {
+}) {
   const variantClasses = {
     default: 'bg-surface-container-highest text-on-surface hover:bg-white/5',
     operator: 'bg-secondary-container text-on-secondary-container hover:brightness-110',
@@ -30,5 +22,3 @@ export function OperationButton({
     </button>
   );
 }
-
-import type { ReactNode } from 'react';

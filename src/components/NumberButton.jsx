@@ -1,10 +1,4 @@
-export interface NumberButtonProps {
-  label: string | React.ReactNode;
-  onClick: () => void;
-  className?: string;
-}
-
-export function NumberButton({ label, onClick, className = '' }: NumberButtonProps) {
+export function NumberButton({ label, onClick, className = '' }) {
   return (
     <button
       onClick={onClick}
@@ -15,5 +9,3 @@ export function NumberButton({ label, onClick, className = '' }: NumberButtonPro
     </button>
   );
 }
-
-import type { ReactNode } from 'react';

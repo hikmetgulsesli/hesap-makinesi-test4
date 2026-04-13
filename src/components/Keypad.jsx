@@ -1,14 +1,9 @@
+import { useEffect } from 'react';
 import { useCalculator } from '../hooks/useCalculator';
 import { NumberButton } from './NumberButton';
 import { OperationButton } from './OperationButton';
 
-export interface KeypadProps {
-  onCalculate?: (expression: string, result: string) => void;
-  onDisplayChange?: (value: string) => void;
-  onExpressionChange?: (expression: string) => void;
-}
-
-export function Keypad({ onCalculate, onDisplayChange, onExpressionChange }: KeypadProps) {
+export function Keypad({ onCalculate, onDisplayChange, onExpressionChange }) {
   const {
     display,
     expression,
@@ -100,6 +95,3 @@ export function Keypad({ onCalculate, onDisplayChange, onExpressionChange }: Key
     </div>
   );
 }
-
-// Import useEffect
-import { useEffect } from 'react';

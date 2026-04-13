@@ -1,18 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 
-export interface HistoryItem {
-  id: string;
-  expression: string;
-  result: string;
-}
-
-export interface DisplayProps {
-  value: string;
-  expression?: string;
-  error?: boolean;
-}
-
-export function Display({ value, expression = '', error = false }: DisplayProps) {
+export function Display({ value, expression = '', error = false }) {
   return (
     <div className={`bg-surface-container-lowest rounded-3xl p-8 flex flex-col items-end justify-end shadow-inner h-48 border border-white/5 ${error ? 'border-error/30' : ''}`}>
       <span className="text-outline font-[family-name:var(--font-headline)] text-lg tracking-wider mb-2 opacity-60">

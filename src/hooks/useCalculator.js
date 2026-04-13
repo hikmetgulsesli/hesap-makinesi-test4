@@ -1,25 +1,9 @@
 import { useState, useCallback, useRef } from 'react';
 
 /**
- * @typedef {Object} UseCalculatorReturn
- * @property {string} display - Current display value
- * @property {number|null} previousValue - Previous value for operations
- * @property {string|null} operator - Current operator
- * @property {boolean} waitingForOperand - Whether waiting for next operand
- * @property {string} expression - Current expression string
- * @property {(digit: string) => void} inputDigit - Input a digit
- * @property {() => void} inputDecimal - Input decimal point
- * @property {(nextOperator: string) => void} performOperation - Perform an operation
- * @property {() => number|null} performCalculation - Calculate result
- * @property {() => void} clearAll - Clear all state
- * @property {(value: string | ((prev: string) => string)) => void} setDisplay - Set display value
- * @property {(value: boolean) => void} setWaitingForOperand - Set waiting state
- */
-
-/**
  * Custom hook for calculator logic
- * @param {(expression: string, result: string) => void} [onCalculate] - Callback when calculation is performed
- * @returns {UseCalculatorReturn} Calculator state and operations
+ * @param {Function} [onCalculate] - Callback when calculation is performed
+ * @returns {Object} Calculator state and operations
  */
 export function useCalculator(onCalculate) {
   const [display, setDisplay] = useState('0');
